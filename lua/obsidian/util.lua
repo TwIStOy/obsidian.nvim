@@ -456,7 +456,7 @@ util.insert_template = function(name, client, location)
   local time_format = client.opts.templates.time_format or "%H:%M"
   local date = tostring(os.date(date_format))
   local time = tostring(os.date(time_format))
-  local title = require("obsidian.note").from_buffer(buf, client.dir):display_name()
+  local title = require("obsidian.note").from_buffer(buf, client.dir, client):display_name()
 
   local insert_lines = {}
   local template_file = io.open(tostring(template_path), "r")

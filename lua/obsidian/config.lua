@@ -10,13 +10,12 @@ local config = {}
 ---@field templates.subdir string
 ---@field templates.date_format string
 ---@field templates.time_format string
----@field note_id_func function|?
 ---@field follow_url_func function|?
----@field note_frontmatter_func function|?
 ---@field disable_frontmatter boolean|?
 ---@field completion obsidian.config.CompletionOpts
 ---@field mappings obsidian.config.MappingOpts
 ---@field daily_notes obsidian.config.DailyNotesOpts
+---@field notes obsidian.config.NotesOpts
 ---@field use_advanced_uri boolean|?
 ---@field open_app_foreground boolean|?
 ---@field finder string|?
@@ -37,6 +36,7 @@ config.ClientOpts.default = function()
     completion = config.CompletionOpts.default(),
     mappings = config.MappingOpts.default(),
     daily_notes = config.DailyNotesOpts.default(),
+    notes = config.NotesOpts.default(),
     use_advanced_uri = nil,
     open_app_foreground = false,
     finder = nil,
@@ -49,9 +49,17 @@ end
 ---@return obsidian.config.ClientOpts
 config.ClientOpts.normalize = function(opts)
   opts = vim.tbl_extend("force", config.ClientOpts.default(), opts)
+
   opts.completion = vim.tbl_extend("force", config.CompletionOpts.default(), opts.completion)
   opts.mappings = opts.mappings and opts.mappings or config.MappingOpts.default()
   opts.daily_notes = vim.tbl_extend("force", config.DailyNotesOpts.default(), opts.daily_notes)
+  -- backward compatibility
+  ---@type obsidian.config.NotesOpts
+  local old_notes_opts = {
+    id_func = opts.note_id_func,
+    frontmatter_func = opts.note_frontmatter_func,
+  }
+  opts.notes = vim.tbl_extend("force", config.NotesOpts.default(), old_notes_opts, opts.notes)
   opts.dir = vim.fs.normalize(tostring(opts.dir))
   return opts
 end
@@ -97,6 +105,22 @@ config.DailyNotesOpts.default = function()
   return {
     folder = nil,
     date_format = nil,
+  }
+end
+
+---@class obsidian.config.NotesOpts
+---@field id_func function?
+---@field frontmatter_func function?
+---@field title_pattern string
+config.NotesOpts = {}
+
+---Get defaults
+---@return obsidian.config.NotesOpts
+config.NotesOpts.default = function()
+  return {
+    id_func = nil,
+    frontmatter_func = nil,
+    title_pattern = "^#+ (.+)$",
   }
 end
 

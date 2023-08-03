@@ -150,14 +150,14 @@ obsidian.setup = function(opts)
       end
 
       local bufnr = vim.api.nvim_get_current_buf()
-      local note = obsidian.note.from_buffer(bufnr, self.dir)
+      local note = obsidian.note.from_buffer(bufnr, self.dir, self)
       if not note:should_save_frontmatter() or self.opts.disable_frontmatter == true then
         return
       end
 
       local frontmatter = nil
-      if self.opts.note_frontmatter_func ~= nil then
-        frontmatter = self.opts.note_frontmatter_func(note)
+      if self.opts.notes.frontmatter_func ~= nil then
+        frontmatter = self.opts.notes.frontmatter_func(note)
       end
       local lines = note:frontmatter_lines(nil, frontmatter)
       vim.api.nvim_buf_set_lines(bufnr, 0, note.frontmatter_end_line and note.frontmatter_end_line or 0, false, lines)
@@ -237,8 +237,8 @@ client.new_note_id = function(self, title)
     and not self:daily_note_path(today_id):is_file()
   then
     return today_id
-  elseif self.opts.note_id_func ~= nil then
-    local new_id = self.opts.note_id_func(title)
+  elseif self.opts.notes.id_func ~= nil then
+    local new_id = self.opts.notes.id_func(title)
     -- Remote '.md' suffix if it's there (we add that later).
     new_id = new_id:gsub("%.md$", "", 1)
     return new_id

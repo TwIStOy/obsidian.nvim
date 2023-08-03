@@ -118,8 +118,9 @@ end
 ---
 ---@param bufnr integer|?
 ---@param root string|Path|?
+---@param client obsidian.Client
 ---@return obsidian.Note
-note.from_buffer = function(bufnr, root)
+note.from_buffer = function(bufnr, root, client)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local path = vim.api.nvim_buf_get_name(bufnr)
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -137,7 +138,7 @@ note.from_buffer = function(bufnr, root)
     end
   end
 
-  return note.from_lines(lines_iter, path, root)
+  return note.from_lines(lines_iter, path, root, client)
 end
 
 ---Get the display name for note.
@@ -155,8 +156,9 @@ end
 ---@param lines function
 ---@param path string|Path
 ---@param root string|Path|?
+---@param client obsidian.Client
 ---@return obsidian.Note
-note.from_lines = function(lines, path, root)
+note.from_lines = function(lines, path, root, client)
   local cwd = tostring(root and root or "./")
 
   local id = nil
@@ -176,7 +178,7 @@ note.from_lines = function(lines, path, root)
         has_frontmatter = true
         in_frontmatter = true
       else
-        local maybe_title = note._parse_header(line)
+        local maybe_title = note._parse_header(line, client.opts.notes.title_pattern)
         if maybe_title then
           title = maybe_title
           break
@@ -190,7 +192,7 @@ note.from_lines = function(lines, path, root)
         table.insert(frontmatter_lines, line)
       end
     else
-      local maybe_title = note._parse_header(line)
+      local maybe_title = note._parse_header(line, client.opts.notes.title_pattern)
       if maybe_title then
         title = maybe_title
         break
@@ -300,9 +302,10 @@ end
 ---Try parsing a header from a line.
 ---
 ---@param line string
+---@param pattern string
 ---@return string|?
-note._parse_header = function(line)
-  return line:match "^# (.+)$"
+note._parse_header = function(line, pattern)
+  return line:match(pattern)
 end
 
 ---Get the frontmatter table to save.
