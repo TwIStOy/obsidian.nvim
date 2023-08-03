@@ -11,11 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added option `prepend_note_id` to allow disabling id generation for new notes.
 - Added `mappings` configuration field.
+- Added option `notes.title_pattern` to customize the pattern to guess the title.
 
 ### Changed
 
 - (internal) Refactored daily note creation.
 - obsidian.nvim will now automatically enable the 'gf' passthrough keybinding within your vault unless the 'gf' keybinding has already been overridden by you or another plugin or you override the 'mappings' configuration field.
+- Move `note_id_func` to `notes.id_func`.
+- Move `note_frontmatter_func` to `notes.frontmatter_func`.
 
 ## [v1.12.0](https://github.com/epwalsh/obsidian.nvim/releases/tag/v1.12.0) - 2023-07-15
 
