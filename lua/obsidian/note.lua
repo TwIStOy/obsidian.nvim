@@ -302,7 +302,7 @@ end
 ---@param line string
 ---@return string|?
 note._parse_header = function(line)
-  return line:match "^#+ (.+)$"
+  return line:match "^# (.+)$"
 end
 
 ---Get the frontmatter table to save.
