@@ -3,6 +3,20 @@ local Path = require "plenary.path"
 
 local util = {}
 
+---Get the strategy for opening notes
+---
+---@param opt "current"|"vsplit"|"hsplit"
+---@return string
+util.get_open_strategy = function(opt)
+  local strategy = "e "
+  if opt == "hsplit" then
+    strategy = "sp "
+  elseif opt == "vsplit" then
+    strategy = "vsp "
+  end
+  return strategy
+end
+
 ---Check if a table (list) contains a value.
 ---
 ---@param table table
@@ -543,6 +557,10 @@ end
 ---(usually because a plugin is not installed)
 util.implementation_unavailable = function()
   error(IMPLEMENTATION_UNAVAILABLE)
+end
+
+util.escape_magic_characters = function(text)
+  return text:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
 end
 
 return util
