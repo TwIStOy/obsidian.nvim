@@ -24,8 +24,8 @@ command.check = function(client, _)
     search_pattern = ".*%.md",
     on_insert = function(entry)
       count = count + 1
-      Note.from_file(entry, client.dir)
-      local ok, note = pcall(Note.from_file, entry, client.dir)
+      Note.from_file(entry, client.dir, client)
+      local ok, note = pcall(Note.from_file, entry, client.dir, client)
       if not ok then
         err_count = err_count + 1
         echo.err("Failed to parse note at " .. entry, client.opts.log_level)
@@ -577,7 +577,7 @@ command.follow = function(client, _)
   end
 
   -- Search for matching notes.
-  local notes = util.find_note(client.dir, note_file_name)
+  local notes = util.find_note(client.dir, note_file_name, client)
 
   if #notes < 1 then
     local aliases = note_name == note_file_name and {} or { note_name }

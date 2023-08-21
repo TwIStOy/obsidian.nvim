@@ -48,7 +48,7 @@ end
 ---@param dir string|Path
 ---@param note_file_name string
 ---@return Path[]
-util.find_note = function(dir, note_file_name)
+util.find_note = function(dir, note_file_name, client)
   local Note = require "obsidian.note"
 
   local notes = {}
@@ -59,7 +59,7 @@ util.find_note = function(dir, note_file_name)
     ---@diagnostic disable-next-line: assign-type-mismatch
     local note_path = Path:new(entry) / note_file_name
     if note_path:is_file() then
-      local ok, _ = pcall(Note.from_file, note_path, root_dir)
+      local ok, _ = pcall(Note.from_file, note_path, root_dir, client)
       if ok then
         table.insert(notes, note_path)
       end

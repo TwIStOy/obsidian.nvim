@@ -203,17 +203,17 @@ client.search = function(self, search, search_opts)
   return function()
     local content_match = search_results()
     if content_match ~= nil then
-      note = obsidian.note.from_file(content_match.path.text, self.dir)
+      note = obsidian.note.from_file(content_match.path.text, self.dir, self)
       found[#found + 1] = note.id
       return note
     end
 
     local path_match = find_results()
-    note = path_match ~= nil and obsidian.note.from_file(path_match, self.dir) or nil
+    note = path_match ~= nil and obsidian.note.from_file(path_match, self.dir, self) or nil
     -- keep looking until we get a new match that we haven't seen yet.
     while path_match ~= nil and note ~= nil and obsidian.util.contains(found, note.id) do
       path_match = find_results()
-      note = path_match ~= nil and obsidian.note.from_file(path_match, self.dir) or nil
+      note = path_match ~= nil and obsidian.note.from_file(path_match, self.dir, self) or nil
     end
 
     if note ~= nil then
@@ -383,7 +383,7 @@ client.resolve_note = function(self, query)
     ---@type Path
     ---@diagnostic disable-next-line: assign-type-mismatch
     local full_path = self.dir / note_path
-    return obsidian.note.from_file(full_path, self.dir)
+    return obsidian.note.from_file(full_path, self.dir, self)
   end
 
   -- Query might be a path.
@@ -396,7 +396,7 @@ client.resolve_note = function(self, query)
   end
   for _, path in pairs(paths_to_check) do
     if path:is_file() then
-      local ok, note = pcall(obsidian.note.from_file, path)
+      local ok, note = pcall(obsidian.note.from_file, path, nil, self)
       if ok then
         return note
       end
