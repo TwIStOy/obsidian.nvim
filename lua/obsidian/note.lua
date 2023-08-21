@@ -96,8 +96,9 @@ end
 ---
 ---@param path string|Path
 ---@param root string|Path|?
+---@param client
 ---@return obsidian.Note
-note.from_file = function(path, root)
+note.from_file = function(path, root, client)
   if path == nil then
     echo.fail "note path cannot be nil"
     error()
@@ -109,7 +110,7 @@ note.from_file = function(path, root)
   end
   local n = note.from_lines(function()
     return f:lines()
-  end, path, root)
+  end, path, root, client)
   f:close()
   return n
 end

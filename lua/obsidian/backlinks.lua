@@ -66,7 +66,7 @@ backlinks.new = function(client, bufnr, winnr)
   self.bufnr = bufnr and bufnr or vim.fn.bufnr()
   self.winnr = winnr and winnr or vim.fn.winnr()
   self.bufname = vim.api.nvim_buf_get_name(self.bufnr)
-  self.note = Note.from_file(self.bufname)
+  self.note = Note.from_file(self.bufname, nil, client)
   return self
 end
 
