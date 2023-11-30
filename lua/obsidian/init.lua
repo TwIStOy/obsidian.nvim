@@ -182,7 +182,11 @@ client.should_save_frontmatter = function(self, note)
     return self.opts.disable_frontmatter == false
   end
   if type(self.opts.disable_frontmatter) == "function" then
-    return not self.opts.disable_frontmatter(note:fname())
+    local fpath
+    if note.path then
+      fpath = note.path:make_relative(tostring(self.dir))
+    end
+    return not self.opts.disable_frontmatter(fpath)
   end
   return true
 end
