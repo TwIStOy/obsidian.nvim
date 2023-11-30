@@ -11,7 +11,7 @@ local config = {}
 ---@field templates.date_format string
 ---@field templates.time_format string
 ---@field follow_url_func function|?
----@field disable_frontmatter boolean|?
+---@field disable_frontmatter (fun(fname: string?): boolean)|boolean|?
 ---@field completion obsidian.config.CompletionOpts
 ---@field mappings obsidian.config.MappingOpts
 ---@field daily_notes obsidian.config.DailyNotesOpts

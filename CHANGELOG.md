@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- `disable_frontmatter` now can be a function to determine whether a note's frontmatter can be managed by obsidian.nvim or not.
 ### Added
 
 - Added option `prepend_note_id` to allow disabling id generation for new notes.

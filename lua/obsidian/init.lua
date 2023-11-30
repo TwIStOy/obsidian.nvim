@@ -150,7 +150,7 @@ obsidian.setup = function(opts)
 
       local bufnr = vim.api.nvim_get_current_buf()
       local note = obsidian.note.from_buffer(bufnr, self.dir, self)
-      if not note:should_save_frontmatter() or self.opts.disable_frontmatter == true then
+      if not self:should_save_frontmatter(note) then
         return
       end
 
@@ -165,6 +165,26 @@ obsidian.setup = function(opts)
   })
 
   return self
+end
+
+---Determines whether a note's frontmatter is managed by obsidian.nvim.
+---
+---@param note obsidian.Note
+---@return boolean
+client.should_save_frontmatter = function(self, note)
+  if not note:should_save_frontmatter() then
+    return false
+  end
+  if self.opts.disable_frontmatter == nil then
+    return true
+  end
+  if type(self.opts.disable_frontmatter) == "boolean" then
+    return self.opts.disable_frontmatter == false
+  end
+  if type(self.opts.disable_frontmatter) == "function" then
+    return not self.opts.disable_frontmatter(note:fname())
+  end
+  return true
 end
 
 ---Find the path to the actual Obsidian vault (it may be in a parent of 'self.dir').
@@ -303,7 +323,7 @@ client.new_note = function(self, title, id, dir, aliases)
 
   -- Create Note object and save.
   local note = obsidian.note.new(new_id, aliases, {}, path)
-  note:save(nil, not self.opts.disable_frontmatter)
+  note:save(nil, self:should_save_frontmatter(note))
   echo.info("Created note " .. tostring(note.id) .. " at " .. tostring(note.path), self.opts.log_level)
 
   return note
@@ -350,7 +370,7 @@ client._daily = function(self, datetime)
   -- Create Note object and save if it doesn't already exist.
   local note = obsidian.note.new(id, { alias }, { "daily-notes" }, path)
   if not note:exists() then
-    note:save(nil, not self.opts.disable_frontmatter)
+    note:save(nil, self:should_save_frontmatter(note))
     echo.info("Created note " .. tostring(note.id) .. " at " .. tostring(note.path), self.opts.log_level)
   end
 
